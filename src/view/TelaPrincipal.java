@@ -26,6 +26,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     boolean isClienteUpdate = false;
     boolean isSapatoUpdate = false;
     boolean isVendaUpdate = false;
+
     /**
      * Creates new form TelaPrincipal
      */
@@ -44,7 +45,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         } catch (java.text.ParseException ex) {
             System.out.print("Erro Encontrado: " + ex.toString());
         }
-        
+
         //INICIAR TABLEAS
         vendaTableBuilder(jtb_vendas, VendaDAO.read());
         clientTableBuilder(jtb_clientes, ClienteDAO.read());
@@ -104,11 +105,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         for (int i = 0; i < clienteList.size(); i++) {
             Cliente c = clienteList.get(i);
             tableRows.addRow(new Object[]{(i + 1), c.getCpf(), c.getNome(), c.getTelefone(),
-            c.getEndereco(), c.getEmail()});
+                c.getEndereco(), c.getEmail()});
         }
         jtable.setModel(tableRows);
     }
-    
+
     void sapatoTableBuilder(JTable jtable, ArrayList<Sapato> sapatoList) {
         DefaultTableModel tableRows;
         tableRows = new DefaultTableModel(new String[]{"Nº", "ID", "Modelo", "Link Imagem"}, 0);
@@ -118,7 +119,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
         jtable.setModel(tableRows);
     }
-    
+
     void vendaTableBuilder(JTable jtable, ArrayList<Venda> vendaList) {
         DefaultTableModel tableRows;
         tableRows = new DefaultTableModel(new String[]{"Nº", "ID", "Cliente", "CPF Cliente", "Sapato",
@@ -129,22 +130,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
             Venda v = vendaList.get(i);
             String nomeCliente = "";
             String sapato = "";
-            for(int j=0; j<clienteList.size(); j++){
-                if(clienteList.get(j).getCpf().equals(v.getFk_cpf())){
+            for (int j = 0; j < clienteList.size(); j++) {
+                if (clienteList.get(j).getCpf().equals(v.getFk_cpf())) {
                     nomeCliente = clienteList.get(j).getNome();
                 }
             }
-            for(int k=0; k<sapatoList.size(); k++){
-                if(sapatoList.get(k).getIdSapato() == v.getFk_idSapato()){
-                    sapato = sapatoList.get(k).getIdSapato()+"- "+sapatoList.get(k).getModelo();
+            for (int k = 0; k < sapatoList.size(); k++) {
+                if (sapatoList.get(k).getIdSapato() == v.getFk_idSapato()) {
+                    sapato = sapatoList.get(k).getIdSapato() + "- " + sapatoList.get(k).getModelo();
                 }
             }
-            tableRows.addRow(new Object[]{(i + 1), v.getIdVenda(), nomeCliente, 
-                v.getFk_cpf(),sapato, dateBuilder(v.getDataVenda()), hourBuilder(v.getDataVenda()), "R$ " + v.getValor()});
+            tableRows.addRow(new Object[]{(i + 1), v.getIdVenda(), nomeCliente,
+                v.getFk_cpf(), sapato, dateBuilder(v.getDataVenda()), hourBuilder(v.getDataVenda()), "R$ " + v.getValor()});
         }
         jtable.setModel(tableRows);
     }
-    
+
     boolean newClientValidation() {
         boolean valido = true;
         String erro = "";
@@ -175,7 +176,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
         return valido;
     }
-    
+
     boolean newSapatoValidation() {
         boolean valido = true;
         String erro = "";
@@ -205,7 +206,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         isClienteUpdate = false;
         jff_cliente_cpf.setEditable(true);
     }
-    
+
     void limparCamposSapato() {
         jtf_sapatos_id.setText("Gerado pelo Sistema");
         jtf_sapatos_modelo.setText("");
@@ -476,15 +477,35 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabel9.setText("Link Imagem:");
 
         jb_sapatos_inserir.setText("Salvar");
+        jb_sapatos_inserir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_sapatos_inserirActionPerformed(evt);
+            }
+        });
 
         jb_sapatos_cancelar.setText("Cancelar");
+        jb_sapatos_cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_sapatos_cancelarActionPerformed(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setText("Cadastrar novo Sapato");
 
         jb_sapatos_remover.setText("Remover Sapato");
+        jb_sapatos_remover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_sapatos_removerActionPerformed(evt);
+            }
+        });
 
         jb_sapatos_editar.setText("Editar Sapato");
+        jb_sapatos_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_sapatos_editarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -646,6 +667,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                         .addGap(39, 39, 39)))
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jtf_cliente_email)
+                                    .addComponent(jtf_cliente_endereco)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(jff_cliente_cpf, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
@@ -653,13 +675,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel5)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jff_cliente_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jtf_cliente_endereco))))))
+                                        .addComponent(jff_cliente_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jlb_cadastroCliente)
-                .addGap(175, 175, 175))
+                .addGap(178, 178, 178))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -690,9 +711,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jb_cliente_inserir)
                     .addComponent(jb_cliente_cancelarInsercao)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jb_cliente_editarCliente)
-                        .addComponent(jb_cliente_removerCliente)))
+                    .addComponent(jb_cliente_editarCliente)
+                    .addComponent(jb_cliente_removerCliente))
                 .addContainerGap())
         );
 
@@ -734,9 +754,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
             novoCliente.setEndereco(jtf_cliente_endereco.getText());
             novoCliente.setTelefone(jff_cliente_telefone.getText());
             String erro = null;
-            if(isClienteUpdate == false){
+            if (isClienteUpdate == false) {
                 erro = ClienteDAO.create(novoCliente);
-            }else{
+            } else {
                 erro = ClienteDAO.update(novoCliente);
             }
             isClienteUpdate = false;
@@ -778,7 +798,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 jtf_cliente_endereco.setText(clientModify.getEndereco());
                 jtf_cliente_email.setText(clientModify.getEmail());
                 jff_cliente_cpf.setEditable(false);
-                
+
                 jlb_cadastroCliente.setText("Alterar Dados Cliente");
                 isClienteUpdate = true;
             } else {
@@ -788,13 +808,65 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jb_cliente_editarClienteActionPerformed
 
     private void jb_cliente_removerClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_cliente_removerClienteActionPerformed
-        clientTableBuilder(jtb_clientes, ClienteDAO.read());
+        String cpfDelete = JOptionPane.showInputDialog("Por favor digite o CPF do Cliente para remover: ");
+        if (cpfDelete != null) {
+            ArrayList<Cliente> clientsList = ClienteDAO.read();
+            Cliente clientDelete = new Cliente();
+            boolean achou = false;
+            for (int i = 0; i < clientsList.size() && achou == false; i++) {
+                clientDelete = clientsList.get(i);
+                if (cpfDelete.replace(".", "").replace("-", "").equals(clientDelete.getCpf().replace(".", "").replace("-", ""))) {
+                    achou = true;
+                }
+            }
+            //FAZER OPERAÇÃO E PEGAR E MOSTRAR O RESULTADO OU ERROS
+            if (achou == true) {
+                int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
+                        + "o Cliente:\nNome: " + clientDelete.getNome() + ", CPF: " + clientDelete.getCpf()
+                        + "\nATENÇÃO: ISSO IRÁ EXCLUIR TODOS AS\nVENDAS DO CLIENTE!!!",
+                        "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+                if (delete == 0) {
+                    String erro = ClienteDAO.delete(clientDelete);
+                    JOptionPane.showMessageDialog(null, (erro == null)
+                            ? "Cliente Removido com Sucesso!"
+                            : "Erro Encontado: \n" + erro, "Resultado da operação",
+                            (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "CPF não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+            //ATUALIZAR TABLEAS
+            vendaTableBuilder(jtb_vendas, VendaDAO.read());
+            clientTableBuilder(jtb_clientes, ClienteDAO.read());
+            sapatoTableBuilder(jtb_sapatos, SapatoDAO.read());
+        }
     }//GEN-LAST:event_jb_cliente_removerClienteActionPerformed
+
+    private void jb_sapatos_inserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_inserirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jb_sapatos_inserirActionPerformed
+
+    private void jb_sapatos_cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_cancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jb_sapatos_cancelarActionPerformed
+
+    private void jb_sapatos_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_editarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jb_sapatos_editarActionPerformed
+
+    private void jb_sapatos_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_removerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jb_sapatos_removerActionPerformed
     //FIM PAGINA CLIENTES ----------------------------------------------------------
 
-    /**
-     * @param args the command line arguments
-     */
+    //INICIO PAGINA SAPATOS ----------------------------------------------------------
+    
+    
+    //FIM PAGINA SAPATOS ----------------------------------------------------------
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
