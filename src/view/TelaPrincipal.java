@@ -50,6 +50,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
         vendaTableBuilder(jtb_vendas, VendaDAO.read());
         clientTableBuilder(jtb_clientes, ClienteDAO.read());
         sapatoTableBuilder(jtb_sapatos, SapatoDAO.read());
+
+        //INICIAR ALGUNS TEXTFILEDS
+        jtf_sapatos_id.setText("Gerado pelo Sistema");
+
     }
 
     String dateBuilder(LocalDateTime localDate) {
@@ -254,7 +258,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jtf_sapatos_linkImagem = new javax.swing.JTextField();
         jb_sapatos_inserir = new javax.swing.JButton();
         jb_sapatos_cancelar = new javax.swing.JButton();
-        jLabel10 = new javax.swing.JLabel();
+        jlb_cadastrar_sapato = new javax.swing.JLabel();
         jb_sapatos_remover = new javax.swing.JButton();
         jb_sapatos_editar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -467,6 +471,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jtb_sapatos);
 
+        jtf_sapatos_id.setEditable(false);
+
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel7.setText("ID:");
 
@@ -490,8 +496,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel10.setText("Cadastrar novo Sapato");
+        jlb_cadastrar_sapato.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jlb_cadastrar_sapato.setText("Cadastrar novo Sapato");
 
         jb_sapatos_remover.setText("Remover Sapato");
         jb_sapatos_remover.addActionListener(new java.awt.event.ActionListener() {
@@ -544,7 +550,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel10)
+                .addComponent(jlb_cadastrar_sapato)
                 .addGap(152, 152, 152))
         );
         jPanel2Layout.setVerticalGroup(
@@ -553,7 +559,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
-                .addComponent(jLabel10)
+                .addComponent(jlb_cadastrar_sapato)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtf_sapatos_modelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -767,6 +773,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                             : JOptionPane.ERROR_MESSAGE);
             if (erro == null) {
                 limparCamposCliente();
+                clientComboBoxBuilder();
             }
             clientTableBuilder(jtb_clientes, ClienteDAO.read());
         }
@@ -841,12 +848,36 @@ public class TelaPrincipal extends javax.swing.JFrame {
             //ATUALIZAR TABLEAS
             vendaTableBuilder(jtb_vendas, VendaDAO.read());
             clientTableBuilder(jtb_clientes, ClienteDAO.read());
-            sapatoTableBuilder(jtb_sapatos, SapatoDAO.read());
+            clientComboBoxBuilder();
         }
     }//GEN-LAST:event_jb_cliente_removerClienteActionPerformed
 
     private void jb_sapatos_inserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_inserirActionPerformed
-        // TODO add your handling code here:
+        if (newSapatoValidation() == true) {
+            Sapato novoSapato = new Sapato();
+            if(isSapatoUpdate == true){
+                novoSapato.setIdSapato(Integer.parseInt(jtf_sapatos_id.getText()));
+            }
+            novoSapato.setModelo(jtf_sapatos_modelo.getText());
+            novoSapato.setLinkImagem(jtf_sapatos_linkImagem.getText());
+            String erro = null;
+            if (isSapatoUpdate == false) {
+                erro = SapatoDAO.create(novoSapato);
+            } else {
+                erro = SapatoDAO.update(novoSapato);
+            }
+            isSapatoUpdate = false;
+            JOptionPane.showMessageDialog(null, (erro == null)
+                    ? "Dados do Sapato salvos com sucesso!"
+                    : "Erro Encontado: \n" + erro, "Resultado da operação",
+                    (erro == null) ? JOptionPane.INFORMATION_MESSAGE
+                            : JOptionPane.ERROR_MESSAGE);
+            if (erro == null) {
+                limparCamposSapato();
+                sapatoComboBoxBuilder();
+                sapatoTableBuilder(jtb_sapatos, SapatoDAO.read());
+            }
+        }
     }//GEN-LAST:event_jb_sapatos_inserirActionPerformed
 
     private void jb_sapatos_cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_cancelarActionPerformed
@@ -854,19 +885,74 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jb_sapatos_cancelarActionPerformed
 
     private void jb_sapatos_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_editarActionPerformed
-        // TODO add your handling code here:
+        //PERGUNTAR QUAL OBJETO A MODIFICAR
+        String idSapatoUpdate = JOptionPane.showInputDialog("Por favor digite o ID do Sapato para modificar: ");
+        //PROCURAR QUAL OBJETO A SER MODIFICADO
+        if (idSapatoUpdate != null) {
+            ArrayList<Sapato> sapatoList = SapatoDAO.read();
+            Sapato sapatoModify = new Sapato();
+            boolean achou = false;
+            for (int i = 0; i < sapatoList.size() && achou == false; i++) {
+                sapatoModify = sapatoList.get(i);
+                if (idSapatoUpdate.equals(""+sapatoModify.getIdSapato())) {
+                    achou = true;
+                }
+            }
+            //PASSAR OS DADOS DO OBJETO PARA TELA DE UPDADE OU MOSTRAR ERRO DE NÃO ENCONTRADO
+            if (achou == true) {
+                jtf_sapatos_id.setText(""+sapatoModify.getIdSapato());
+                jtf_sapatos_linkImagem.setText(sapatoModify.getLinkImagem());
+                jtf_sapatos_modelo.setText(sapatoModify.getModelo());
+
+                jlb_cadastrar_sapato.setText("Alterar Dados Sapato");
+                isSapatoUpdate = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_jb_sapatos_editarActionPerformed
 
     private void jb_sapatos_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_removerActionPerformed
-        // TODO add your handling code here:
+        String idDelete = JOptionPane.showInputDialog("Por favor digite o CPF do Cliente para remover: ");
+        if (idDelete != null) {
+            ArrayList<Sapato> sapatoList = SapatoDAO.read();
+            Sapato sapatoDelete = new Sapato();
+            boolean achou = false;
+            for (int i = 0; i < sapatoList.size() && achou == false; i++) {
+                sapatoDelete = sapatoList.get(i);
+                if (idDelete.equals(""+sapatoDelete.getIdSapato())) {
+                    achou = true;
+                }
+            }
+            //FAZER OPERAÇÃO E PEGAR E MOSTRAR O RESULTADO OU ERROS
+            if (achou == true) {
+                int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
+                        + "o Sapato:\n"+sapatoDelete.getIdSapato()+"- "+sapatoDelete.getModelo()
+                        + "\nATENÇÃO: ISSO IRÁ EXCLUIR TODOS AS\nVENDAS COM O SAPATO!!!",
+                        "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+                if (delete == 0) {
+                    String erro = SapatoDAO.delete(sapatoDelete);
+                    JOptionPane.showMessageDialog(null, (erro == null)
+                            ? "Sapato Removido com Sucesso!"
+                            : "Erro Encontado: \n" + erro, "Resultado da operação",
+                            (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+            //ATUALIZAR TABLEAS
+            vendaTableBuilder(jtb_vendas, VendaDAO.read());
+            sapatoComboBoxBuilder();
+            sapatoTableBuilder(jtb_sapatos, SapatoDAO.read());
+        }
     }//GEN-LAST:event_jb_sapatos_removerActionPerformed
     //FIM PAGINA CLIENTES ----------------------------------------------------------
 
     //INICIO PAGINA SAPATOS ----------------------------------------------------------
-    
-    
     //FIM PAGINA SAPATOS ----------------------------------------------------------
-
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -901,7 +987,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -943,6 +1028,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField jff_cliente_telefone;
     private javax.swing.JFormattedTextField jff_venda_data;
     private javax.swing.JFormattedTextField jff_venda_hora;
+    private javax.swing.JLabel jlb_cadastrar_sapato;
     private javax.swing.JLabel jlb_cadastroCliente;
     private javax.swing.JTable jtb_clientes;
     private javax.swing.JTable jtb_sapatos;
