@@ -127,7 +127,7 @@
                                               <EmptySpace max="32767" attributes="0"/>
                                               <Component id="jff_venda_hora" min="-2" pref="51" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="jtf_vendas_getDateTime" min="-2" pref="30" max="-2" attributes="0"/>
+                                              <Component id="jb_vendas_getDateTime" min="-2" pref="30" max="-2" attributes="0"/>
                                           </Group>
                                           <Component id="jtf_vendas_valor" alignment="0" max="32767" attributes="0"/>
                                       </Group>
@@ -145,7 +145,7 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
+                      <Component id="jlb_cadastrar_venda" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="153" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -156,7 +156,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="19" max="32767" attributes="0"/>
-                      <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
+                      <Component id="jlb_cadastrar_venda" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
@@ -204,7 +204,7 @@
                                               <Component id="jff_venda_data" alignment="3" min="-2" max="-2" attributes="0"/>
                                               <Component id="jff_venda_hora" alignment="3" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="jtf_vendas_getDateTime" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
+                                          <Component id="jb_vendas_getDateTime" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="72" pref="72" max="-2" attributes="0"/>
                                   </Group>
@@ -249,6 +249,9 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jcb_vendas_clienteItemStateChanged"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -282,6 +285,9 @@
               <Properties>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
+              <Events>
+                <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jtf_vendas_valorKeyTyped"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel12">
               <Properties>
@@ -339,7 +345,7 @@
                 <Property name="text" type="java.lang.String" value="Hora:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jtf_vendas_getDateTime">
+            <Component class="javax.swing.JButton" name="jb_vendas_getDateTime">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="10" style="0"/>
@@ -351,34 +357,49 @@
                   <Insets value="[1, 14, 1, 14]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jb_vendas_getDateTimeActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel20">
+            <Component class="javax.swing.JLabel" name="jlb_cadastrar_venda">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Cadastrar Nova Venda:"/>
+                <Property name="text" type="java.lang.String" value="Cadastrar Nova Venda"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="jb_vendas_inserir">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Salvar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jb_vendas_inserirActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jb_vendas_cancelar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Cancelar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jb_vendas_cancelarActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jb_vendas_remover">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Remover Venda"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jb_vendas_removerActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jb_vendas_editar">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Editar Venda"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jb_vendas_editarActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="jff_venda_data">
             </Component>

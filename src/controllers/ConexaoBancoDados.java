@@ -15,7 +15,7 @@ public class ConexaoBancoDados {
             System.out.println("\nErro encontrado: "+ e.toString());
             hasError = true;
         }
-            System.out.println((hasError == false) ? "Conexão efetuada com sucesso!" : "Não foi Possível efetuar uma conexão ao banco...");
+            //System.out.println((hasError == false) ? "Conexão efetuada com sucesso!" : "Não foi Possível efetuar uma conexão ao banco...");
         return databaseConnection;
     }
 }

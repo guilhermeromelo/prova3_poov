@@ -8,8 +8,11 @@ package view;
 import controllers.ClienteDAO;
 import controllers.SapatoDAO;
 import controllers.VendaDAO;
+import java.awt.event.ItemEvent;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -53,6 +56,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         //INICIAR ALGUNS TEXTFILEDS
         jtf_sapatos_id.setText("Gerado pelo Sistema");
+        jtf_vendas_idVenda.setText("Gerado pelo Sistema");
+        jtf_vendas_idVenda.setText("Gerado pelo Sistema");
+        jtf_vendas_cpfCliente.setText("Selecione Acima o Cliente");
 
     }
 
@@ -200,6 +206,104 @@ public class TelaPrincipal extends javax.swing.JFrame {
         return valido;
     }
 
+    boolean dateVerification(String date) {
+        //CRIAÇÃO DAS VARIAVEIS
+        boolean dataValida = true;
+        int dia = 29, mes = 12, ano = 2020;
+        if (date.equals("  /  /  ") || date.contains(" ")) {
+            dataValida = false;
+        }
+        if (dataValida == true) {
+            StringTokenizer dataTokenizer = new StringTokenizer(date, "/");
+            dia = Integer.parseInt(dataTokenizer.nextToken());
+            mes = Integer.parseInt(dataTokenizer.nextToken());
+            if (mes > 12 || mes < 1) {
+                dataValida = false;
+            }
+            //MES COM 31 DIAS
+            if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
+                if (dia > 31 || dia < 1) {
+                    dataValida = false;
+                }
+            } else if (mes == 2) {
+                //FEVEREIRO COM 29 DIAS
+                if (ano % 4 == 0) {
+                    if (dia > 29 || dia < 1) {
+                        dataValida = false;
+                    }
+                } else {
+                    //FEVEREIRO COM 28 DIAS
+                    if (dia > 28 || dia < 1) {
+                        dataValida = false;
+                    }
+                }
+            } else {
+                //MES COM 30 DIAS
+                if (dia > 30 || dia < 1) {
+                    dataValida = false;
+                }
+            }
+        }
+        return dataValida;
+    }
+
+    boolean timeVerification(String time) {
+        boolean valido = true;
+        if (time.equals("  :  ") || time.contains(" ")) {
+            valido = false;
+        }
+        if (valido == true) {
+            StringTokenizer token = new StringTokenizer(time, ":");
+            int hora = Integer.parseInt(token.nextToken());
+            int min = Integer.parseInt(token.nextToken());
+
+            if (hora < 0 || hora > 23) {
+                valido = false;
+            }
+            if (min < 0 || min > 59) {
+                valido = false;
+            }
+        }
+        return valido;
+    }
+
+    boolean newVendaValidation() {
+        boolean valido = true;
+        String erro = "";
+        if (jtf_vendas_cpfCliente.getText().equals("") || jtf_vendas_cpfCliente.getText().equals("Selecione Acima o Cliente")) {
+            erro = erro + "\nCliente Não Selecionado";
+            valido = false;
+        }
+        if (jcb_vendas_sapatos.getSelectedIndex() == 0) {
+            erro = erro + "\nSapato Não Selecionado";
+            valido = false;
+        }
+        if (dateVerification(jff_venda_data.getText()) == false) {
+            valido = false;
+            erro = erro + "\nData Inválida";
+        }
+        if (timeVerification(jff_venda_hora.getText()) == false) {
+            valido = false;
+            erro = erro + "\nHora Inválida";
+        }
+        try {
+            double d = Double.parseDouble(jtf_vendas_valor.getText().replace(",", "."));
+        } catch (NumberFormatException e) {
+            valido = false;
+            erro = erro + "\nValor Inválido";
+        }
+        if (jtf_vendas_valor.equals("")) {
+            valido = false;
+            erro = erro + "\nHora Inválida";
+        }
+        //SHOW ERROR MESSAGE
+        if (erro != "") {
+            JOptionPane.showMessageDialog(null, "Erro(s) Encontrados: " + erro,
+                    "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+        }
+        return valido;
+    }
+
     void limparCamposCliente() {
         jlb_cadastroCliente.setText("Cadastrar Novo Cliente");
         jtf_cliente_email.setText("");
@@ -212,10 +316,23 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     void limparCamposSapato() {
+        jlb_cadastrar_sapato.setText("Cadastrar Novo Sapato");
         jtf_sapatos_id.setText("Gerado pelo Sistema");
         jtf_sapatos_modelo.setText("");
         jtf_sapatos_linkImagem.setText("");
         isSapatoUpdate = false;
+    }
+
+    void limparCamposVenda() {
+        jlb_cadastrar_venda.setText("Cadastrar Nova Venda");
+        jtf_vendas_idVenda.setText("Gerado pelo Sistema");
+        jtf_vendas_cpfCliente.setText("Selecione Acima o Cliente");
+        jtf_vendas_valor.setText("");
+        jff_venda_data.setText("");
+        jff_venda_hora.setText("");
+        jcb_vendas_cliente.setSelectedIndex(0);
+        jcb_vendas_sapatos.setSelectedIndex(0);
+        isVendaUpdate = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -239,8 +356,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
-        jtf_vendas_getDateTime = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
+        jb_vendas_getDateTime = new javax.swing.JButton();
+        jlb_cadastrar_venda = new javax.swing.JLabel();
         jb_vendas_inserir = new javax.swing.JButton();
         jb_vendas_cancelar = new javax.swing.JButton();
         jb_vendas_remover = new javax.swing.JButton();
@@ -299,6 +416,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jtb_vendas);
 
         jcb_vendas_cliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jcb_vendas_cliente.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcb_vendas_clienteItemStateChanged(evt);
+            }
+        });
 
         jtf_vendas_cpfCliente.setEditable(false);
 
@@ -307,6 +429,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jtf_vendas_idVenda.setEditable(false);
 
         jtf_vendas_valor.setToolTipText("");
+        jtf_vendas_valor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_vendas_valorKeyTyped(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel12.setText("Sapato:");
@@ -329,20 +456,45 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabel19.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel19.setText("Hora:");
 
-        jtf_vendas_getDateTime.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jtf_vendas_getDateTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/baseline_schedule_black_18dp.png"))); // NOI18N
-        jtf_vendas_getDateTime.setMargin(new java.awt.Insets(1, 14, 1, 14));
+        jb_vendas_getDateTime.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jb_vendas_getDateTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/baseline_schedule_black_18dp.png"))); // NOI18N
+        jb_vendas_getDateTime.setMargin(new java.awt.Insets(1, 14, 1, 14));
+        jb_vendas_getDateTime.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_vendas_getDateTimeActionPerformed(evt);
+            }
+        });
 
-        jLabel20.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel20.setText("Cadastrar Nova Venda:");
+        jlb_cadastrar_venda.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jlb_cadastrar_venda.setText("Cadastrar Nova Venda");
 
         jb_vendas_inserir.setText("Salvar");
+        jb_vendas_inserir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_vendas_inserirActionPerformed(evt);
+            }
+        });
 
         jb_vendas_cancelar.setText("Cancelar");
+        jb_vendas_cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_vendas_cancelarActionPerformed(evt);
+            }
+        });
 
         jb_vendas_remover.setText("Remover Venda");
+        jb_vendas_remover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_vendas_removerActionPerformed(evt);
+            }
+        });
 
         jb_vendas_editar.setText("Editar Venda");
+        jb_vendas_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_vendas_editarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -393,7 +545,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jff_venda_hora, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jtf_vendas_getDateTime, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jb_vendas_getDateTime, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jtf_vendas_valor)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -403,7 +555,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel20)
+                .addComponent(jlb_cadastrar_venda)
                 .addGap(153, 153, 153))
         );
         jPanel1Layout.setVerticalGroup(
@@ -412,7 +564,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(jLabel20)
+                .addComponent(jlb_cadastrar_venda)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -451,7 +603,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                         .addComponent(jLabel19)
                                         .addComponent(jff_venda_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jff_venda_hora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jtf_vendas_getDateTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jb_vendas_getDateTime, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(72, 72, 72)))))
                 .addContainerGap())
         );
@@ -851,11 +1003,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
             clientComboBoxBuilder();
         }
     }//GEN-LAST:event_jb_cliente_removerClienteActionPerformed
+    //FIM PAGINA CLIENTES ----------------------------------------------------------
 
+    //INICIO PAGINA SAPATOS ----------------------------------------------------------
     private void jb_sapatos_inserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_inserirActionPerformed
         if (newSapatoValidation() == true) {
             Sapato novoSapato = new Sapato();
-            if(isSapatoUpdate == true){
+            if (isSapatoUpdate == true) {
                 novoSapato.setIdSapato(Integer.parseInt(jtf_sapatos_id.getText()));
             }
             novoSapato.setModelo(jtf_sapatos_modelo.getText());
@@ -881,7 +1035,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jb_sapatos_inserirActionPerformed
 
     private void jb_sapatos_cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_cancelarActionPerformed
-        // TODO add your handling code here:
+        limparCamposSapato();
     }//GEN-LAST:event_jb_sapatos_cancelarActionPerformed
 
     private void jb_sapatos_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_editarActionPerformed
@@ -894,13 +1048,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
             boolean achou = false;
             for (int i = 0; i < sapatoList.size() && achou == false; i++) {
                 sapatoModify = sapatoList.get(i);
-                if (idSapatoUpdate.equals(""+sapatoModify.getIdSapato())) {
+                if (idSapatoUpdate.equals("" + sapatoModify.getIdSapato())) {
                     achou = true;
                 }
             }
             //PASSAR OS DADOS DO OBJETO PARA TELA DE UPDADE OU MOSTRAR ERRO DE NÃO ENCONTRADO
             if (achou == true) {
-                jtf_sapatos_id.setText(""+sapatoModify.getIdSapato());
+                jtf_sapatos_id.setText("" + sapatoModify.getIdSapato());
                 jtf_sapatos_linkImagem.setText(sapatoModify.getLinkImagem());
                 jtf_sapatos_modelo.setText(sapatoModify.getModelo());
 
@@ -913,21 +1067,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jb_sapatos_editarActionPerformed
 
     private void jb_sapatos_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_sapatos_removerActionPerformed
-        String idDelete = JOptionPane.showInputDialog("Por favor digite o CPF do Cliente para remover: ");
+        String idDelete = JOptionPane.showInputDialog("Por favor digite o ID do Sapato para remover: ");
         if (idDelete != null) {
             ArrayList<Sapato> sapatoList = SapatoDAO.read();
             Sapato sapatoDelete = new Sapato();
             boolean achou = false;
             for (int i = 0; i < sapatoList.size() && achou == false; i++) {
                 sapatoDelete = sapatoList.get(i);
-                if (idDelete.equals(""+sapatoDelete.getIdSapato())) {
+                if (idDelete.equals("" + sapatoDelete.getIdSapato())) {
                     achou = true;
                 }
             }
             //FAZER OPERAÇÃO E PEGAR E MOSTRAR O RESULTADO OU ERROS
             if (achou == true) {
                 int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
-                        + "o Sapato:\n"+sapatoDelete.getIdSapato()+"- "+sapatoDelete.getModelo()
+                        + "o Sapato:\n" + sapatoDelete.getIdSapato() + "- " + sapatoDelete.getModelo()
                         + "\nATENÇÃO: ISSO IRÁ EXCLUIR TODOS AS\nVENDAS COM O SAPATO!!!",
                         "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
@@ -949,10 +1103,195 @@ public class TelaPrincipal extends javax.swing.JFrame {
             sapatoTableBuilder(jtb_sapatos, SapatoDAO.read());
         }
     }//GEN-LAST:event_jb_sapatos_removerActionPerformed
-    //FIM PAGINA CLIENTES ----------------------------------------------------------
-
-    //INICIO PAGINA SAPATOS ----------------------------------------------------------
     //FIM PAGINA SAPATOS ----------------------------------------------------------
+
+    //INICIO PAGINA VENDAS ----------------------------------------------------------
+    private void jcb_vendas_clienteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcb_vendas_clienteItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String newChoice = jcb_vendas_cliente.getSelectedItem().toString();
+            if (!newChoice.equals("Selecionar...")) {
+                boolean achou = false;
+                ArrayList<Cliente> clientList = ClienteDAO.read();
+                Cliente selectedCliente = null;
+                for (int i = 0; i < clientList.size() && achou == false; i++) {
+                    selectedCliente = clientList.get(i);
+                    if (selectedCliente.getNome().equals(newChoice)) {
+                        achou = true;
+                    }
+                }
+                if (achou == true) {
+                    jtf_vendas_cpfCliente.setText(selectedCliente.getCpf());
+                }
+            } else {
+                jtf_vendas_cpfCliente.setText("Selecione Acima o Cliente");
+            }
+        }
+    }//GEN-LAST:event_jcb_vendas_clienteItemStateChanged
+
+    private void jb_vendas_getDateTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_vendas_getDateTimeActionPerformed
+        jff_venda_data.setText(dateBuilder(LocalDateTime.now()));
+        jff_venda_hora.setText(hourBuilder(LocalDateTime.now()));
+    }//GEN-LAST:event_jb_vendas_getDateTimeActionPerformed
+
+    private void jb_vendas_inserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_vendas_inserirActionPerformed
+        if (newVendaValidation() == true) {
+            Venda novaVenda = new Venda();
+            if (isVendaUpdate == true) {
+                novaVenda.setIdVenda(Integer.parseInt(jtf_vendas_idVenda.getText()));
+            }
+            novaVenda.setFk_cpf(jtf_vendas_cpfCliente.getText());
+            StringTokenizer idSapato = new StringTokenizer(jcb_vendas_sapatos.getSelectedItem().toString(), "-");
+            novaVenda.setFk_idSapato(Integer.parseInt(idSapato.nextToken()));
+            novaVenda.setValor(Double.parseDouble(jtf_vendas_valor.getText().replace(",", ".")));
+
+            //RECUPERAR DATA E HORA E GRAVAR
+            StringTokenizer st = new StringTokenizer(jff_venda_data.getText(), "/");
+            int dia = Integer.parseInt(st.nextToken());
+            int mes = Integer.parseInt(st.nextToken());
+            int ano = Integer.parseInt(st.nextToken()) + 2000;
+            StringTokenizer st2 = new StringTokenizer(jff_venda_hora.getText(), ":");
+            int hora = Integer.parseInt(st2.nextToken());
+            int min = Integer.parseInt(st2.nextToken());
+            novaVenda.setDataVenda(LocalDateTime.of(ano, mes, dia, hora, min));
+            String erro = null;
+            if (isVendaUpdate == false) {
+                erro = VendaDAO.create(novaVenda);
+            } else {
+                erro = VendaDAO.update(novaVenda);
+            }
+            isVendaUpdate = false;
+            JOptionPane.showMessageDialog(null, (erro == null)
+                    ? "Dados do Sapato salvos com sucesso!"
+                    : "Erro Encontado: \n" + erro, "Resultado da operação",
+                    (erro == null) ? JOptionPane.INFORMATION_MESSAGE
+                            : JOptionPane.ERROR_MESSAGE);
+            if (erro == null) {
+                limparCamposVenda();
+                vendaTableBuilder(jtb_vendas, VendaDAO.read());
+            }
+        }
+    }//GEN-LAST:event_jb_vendas_inserirActionPerformed
+
+    private void jb_vendas_cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_vendas_cancelarActionPerformed
+        // TODO add your handling code here:
+        limparCamposVenda();
+    }//GEN-LAST:event_jb_vendas_cancelarActionPerformed
+
+    private void jb_vendas_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_vendas_editarActionPerformed
+        //PERGUNTAR QUAL OBJETO A MODIFICAR
+        String idVendaUpdate = JOptionPane.showInputDialog("Por favor digite o ID da Venda para modificar: ");
+        //PROCURAR QUAL OBJETO A SER MODIFICADO
+        if (idVendaUpdate != null) {
+            ArrayList<Venda> vendaList = VendaDAO.read();
+            Venda vendaModify = new Venda();
+            boolean achou = false;
+            for (int i = 0; i < vendaList.size() && achou == false; i++) {
+                vendaModify = vendaList.get(i);
+                if (idVendaUpdate.equals("" + vendaModify.getIdVenda())) {
+                    achou = true;
+                }
+            }
+            //PASSAR OS DADOS DO OBJETO PARA TELA DE UPDADE OU MOSTRAR ERRO DE NÃO ENCONTRADO
+            if (achou == true) {
+                jtf_vendas_idVenda.setText("" + vendaModify.getIdVenda());
+                jtf_vendas_cpfCliente.setText(vendaModify.getFk_cpf());
+                String nome = "";
+                ArrayList<Cliente> clienteList = ClienteDAO.read();
+                for (int i = 0; i < clienteList.size(); i++) {
+                    if (clienteList.get(i).getCpf().equals(vendaModify.getFk_cpf())) {
+                        nome = clienteList.get(i).getNome();
+                    }
+                }
+                System.out.println(nome);
+                jcb_vendas_cliente.setSelectedItem(nome);
+                
+                ArrayList<Sapato> sapatoList = SapatoDAO.read();
+                for(int i=0;i<sapatoList.size();i++){
+                    Sapato auxSapato = sapatoList.get(i);
+                    if(auxSapato.getIdSapato() == vendaModify.getFk_idSapato()){
+                        jcb_vendas_sapatos.setSelectedItem(auxSapato.getIdSapato()+"- "+auxSapato.getModelo());
+                    }
+                }
+                
+                
+                jff_venda_data.setText(dateBuilder(vendaModify.getDataVenda()));
+                jff_venda_hora.setText(hourBuilder(vendaModify.getDataVenda()));
+                jtf_vendas_valor.setText(""+vendaModify.getValor());
+                jlb_cadastrar_venda.setText("Alterar Dados Venda");
+                isVendaUpdate = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jb_vendas_editarActionPerformed
+
+    private void jb_vendas_removerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_vendas_removerActionPerformed
+        // TODO add your handling code here:
+        String idDelete = JOptionPane.showInputDialog("Por favor digite o ID da Venda para modificar: ");
+        if (idDelete != null) {
+            ArrayList<Venda> vendaList = VendaDAO.read();
+            Venda vendaDelete = new Venda();
+            boolean achou = false;
+            for (int i = 0; i < vendaList.size() && achou == false; i++) {
+                vendaDelete = vendaList.get(i);
+                if (idDelete.equals("" + vendaDelete.getIdVenda())) {
+                    achou = true;
+                }
+            }
+            String modeloSapato = "";
+            ArrayList<Sapato> sapatoList = SapatoDAO.read();
+            for(int i=0;i<sapatoList.size();i++){
+                if(sapatoList.get(i).getIdSapato() == vendaDelete.getFk_idSapato()){
+                    modeloSapato = sapatoList.get(i).getModelo();
+                }
+            }
+            String nomeCliente = "";
+            ArrayList<Cliente> clienteList = ClienteDAO.read();
+            for(int i=0;i<clienteList.size();i++){
+                if(clienteList.get(i).getCpf().equals(vendaDelete.getFk_cpf())){
+                    nomeCliente = clienteList.get(i).getNome();
+                }
+            }
+            
+            //FAZER OPERAÇÃO E PEGAR E MOSTRAR O RESULTADO OU ERROS
+            if (achou == true) {
+                int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
+                        + "\na Venda do Sapato: " + vendaDelete.getFk_idSapato()+ "- " + modeloSapato
+                        +"\ndo Cliente: " + nomeCliente + ",\nCPF: "+vendaDelete.getFk_cpf() ,
+                        "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+                if (delete == 0) {
+                    String erro = VendaDAO.delete(vendaDelete);
+                    JOptionPane.showMessageDialog(null, (erro == null)
+                            ? "Sapato Removido com Sucesso!"
+                            : "Erro Encontado: \n" + erro, "Resultado da operação",
+                            (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+            //ATUALIZAR TABLEAS
+            vendaTableBuilder(jtb_vendas, VendaDAO.read());
+        }
+    }//GEN-LAST:event_jb_vendas_removerActionPerformed
+
+    private void jtf_vendas_valorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_vendas_valorKeyTyped
+        String caracteres = "0987654321.,";
+        String aux = ",.";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        } else {
+            if (aux.contains(evt.getKeyChar() + "")) {
+                if (jtf_vendas_valor.getText().contains(".") || jtf_vendas_valor.getText().contains(",")) {
+                    evt.consume();
+                }
+            }
+        }
+    }//GEN-LAST:event_jtf_vendas_valorKeyTyped
+    //FIM PAGINA VENDAS ----------------------------------------------------------
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -984,7 +1323,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
@@ -995,7 +1334,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1020,6 +1358,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jb_sapatos_remover;
     private javax.swing.JButton jb_vendas_cancelar;
     private javax.swing.JButton jb_vendas_editar;
+    private javax.swing.JButton jb_vendas_getDateTime;
     private javax.swing.JButton jb_vendas_inserir;
     private javax.swing.JButton jb_vendas_remover;
     private javax.swing.JComboBox<String> jcb_vendas_cliente;
@@ -1029,6 +1368,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField jff_venda_data;
     private javax.swing.JFormattedTextField jff_venda_hora;
     private javax.swing.JLabel jlb_cadastrar_sapato;
+    private javax.swing.JLabel jlb_cadastrar_venda;
     private javax.swing.JLabel jlb_cadastroCliente;
     private javax.swing.JTable jtb_clientes;
     private javax.swing.JTable jtb_sapatos;
@@ -1040,7 +1380,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField jtf_sapatos_linkImagem;
     private javax.swing.JTextField jtf_sapatos_modelo;
     private javax.swing.JTextField jtf_vendas_cpfCliente;
-    private javax.swing.JButton jtf_vendas_getDateTime;
     private javax.swing.JTextField jtf_vendas_idVenda;
     private javax.swing.JTextField jtf_vendas_valor;
     // End of variables declaration//GEN-END:variables
