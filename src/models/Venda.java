@@ -1,19 +1,20 @@
 package models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Venda {
     private int idVenda;
     private String fk_cpf;
     private int fk_idSapato;
-    private LocalDate data;
+    private LocalDateTime dataVenda;
     private double valor;
 
-    public Venda(int idVenda, String fk_cpf, int fk_idSapato, LocalDate data, double valor) {
+    public Venda(int idVenda, String fk_cpf, int fk_idSapato, LocalDateTime data, double valor) {
         this.idVenda = idVenda;
         this.fk_cpf = fk_cpf;
         this.fk_idSapato = fk_idSapato;
-        this.data = data;
+        this.dataVenda = data;
         this.valor = valor;
     }
     
@@ -21,7 +22,7 @@ public class Venda {
         this.idVenda = -1;
         this.fk_cpf = "";
         this.fk_idSapato = -1;
-        this.data = null;
+        this.dataVenda = null;
         this.valor = 0;
     }
 
@@ -49,12 +50,12 @@ public class Venda {
         this.fk_idSapato = fk_idSapato;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDateTime getDataVenda() {
+        return dataVenda;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setDataVenda(LocalDateTime dataVenda) {
+        this.dataVenda = dataVenda;
     }
 
     public double getValor() {
@@ -67,6 +68,6 @@ public class Venda {
 
     @Override
     public String toString() {
-        return "Venda{" + "idVenda=" + idVenda + ", fk_cpf=" + fk_cpf + ", fk_idSapato=" + fk_idSapato + ", data=" + data + ", valor=" + valor + '}';
+        return "Venda{" + "idVenda=" + idVenda + ", fk_cpf=" + fk_cpf + ", fk_idSapato=" + fk_idSapato + ", data=" + dataVenda + ", valor=" + valor + '}';
     }
 }

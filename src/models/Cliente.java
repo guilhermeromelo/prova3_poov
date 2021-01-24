@@ -3,14 +3,14 @@ package models;
 public class Cliente {
     private String cpf;
     private String nome;
-    private String endereço;
+    private String endereco;
     private String email;
     private String telefone;
 
     public Cliente() {
         this.cpf = "";
         this.nome = "";
-        this.endereço = "";
+        this.endereco = "";
         this.email = "";
         this.telefone = "";
     }
@@ -18,7 +18,7 @@ public class Cliente {
     public Cliente(String cpf, String nome, String endereço, String email, String telefone) {
         this.cpf = cpf;
         this.nome = nome;
-        this.endereço = endereço;
+        this.endereco = endereço;
         this.email = email;
         this.telefone = telefone;
     }
@@ -39,12 +39,12 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getEndereço() {
-        return endereço;
+    public String getEndereco() {
+        return endereco;
     }
 
-    public void setEndereço(String endereço) {
-        this.endereço = endereço;
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public String getEmail() {
@@ -65,6 +65,6 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente{" + "cpf=" + cpf + ", nome=" + nome + ", endere\u00e7o=" + endereço + ", email=" + email + ", telefone=" + telefone + '}';
+        return "Cliente{" + "cpf=" + cpf + ", nome=" + nome + ", endere\u00e7o=" + endereco + ", email=" + email + ", telefone=" + telefone + '}';
     }
 }
