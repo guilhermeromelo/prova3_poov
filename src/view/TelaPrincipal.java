@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package view;
 
 import controllers.ClienteDAO;
@@ -20,19 +16,12 @@ import models.Cliente;
 import models.Sapato;
 import models.Venda;
 
-/**
- *
- * @author Guilherme
- */
 public class TelaPrincipal extends javax.swing.JFrame {
 
     boolean isClienteUpdate = false;
     boolean isSapatoUpdate = false;
     boolean isVendaUpdate = false;
 
-    /**
-     * Creates new form TelaPrincipal
-     */
     public TelaPrincipal() {
         initComponents();
 
@@ -61,7 +50,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jtf_vendas_cpfCliente.setText("Selecione Acima o Cliente");
 
     }
-
+    
     String dateBuilder(LocalDateTime localDate) {
         String dia = "" + localDate.getDayOfMonth();
         if (dia.length() == 1) {
@@ -398,6 +387,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jlb_cadastroCliente = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Loja de Sapatos");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("Loja de Sapatos");
